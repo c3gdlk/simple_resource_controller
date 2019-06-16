@@ -88,7 +88,7 @@ module SimpleResourceController
       end
 
       def resource_class_name
-        self.class.resource_class_config || self.class.name.gsub('Controller', '').singularize
+        self.class.resource_class_config || self.class.name.split('::').last.gsub('Controller', '').singularize
       end
 
       def resource_class
