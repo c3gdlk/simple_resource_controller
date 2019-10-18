@@ -96,7 +96,7 @@ module SimpleResourceController
       end
 
       def resource_name
-        resource_class_name.underscore
+        resource_class_name.split('::').last.underscore
       end
 
       def resource_relation_name

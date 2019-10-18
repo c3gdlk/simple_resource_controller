@@ -18,7 +18,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
   describe '#show' do
     let!(:article_1) { Article.create title: 'First article' }
 
-    before { get :show, id: article_1.id }
+    before { get :show, params: { id: article_1.id } }
 
     it 'should find current_user article' do
       expect(response).to render_template(:show)
@@ -39,7 +39,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
     context 'when success' do
       let(:params) { { article: { title: 'First article' } } }
 
-      before { post :create, params }
+      before { post :create, params: params }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to redirect_to(admin_articles_path)
@@ -52,7 +52,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
     context 'when article not valid' do
       let(:params) { { article: { title: '' } } }
 
-      before { post :create, params }
+      before { post :create, params: params }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to render_template(:new)
@@ -67,7 +67,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
   describe '#edit' do
     let(:article_1) { Article.create title: 'First article' }
 
-    before { get :edit, id: article_1.id }
+    before { get :edit, params: { id: article_1.id } }
 
     it 'should render form' do
       expect(response).to render_template(:edit)
@@ -81,7 +81,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
     context 'when success' do
       let(:params) { { title: 'First article - new name' } }
 
-      before { put :update, id: article_1.id, article: params }
+      before { put :update, params: { id: article_1.id, article: params } }
 
       it 'should update article and redirect to articles path' do
         expect(response).to redirect_to(admin_articles_path)
@@ -93,7 +93,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
     context 'when article not valid' do
       let(:params) { { title: '' } }
 
-      before { put :update, id: article_1.id, article: params }
+      before { put :update, params: { id: article_1.id, article: params } }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to render_template(:edit)
@@ -109,7 +109,7 @@ RSpec.describe AnotherArticlesController, type: :controller do
   describe '#destroy' do
     let(:article_1) { Article.create title: 'First article' }
 
-    before { delete :destroy, id: article_1.id }
+    before { delete :destroy, params: { id: article_1.id } }
 
     it 'should render form' do
       expect(response).to redirect_to(admin_articles_path)

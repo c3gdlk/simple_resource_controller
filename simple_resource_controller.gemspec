@@ -25,5 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "railties", ">= 3.2"
   spec.add_dependency "actionpack", ">= 3.2"
-  spec.add_dependency "responders", "~> 2.0"
+  spec.add_dependency "responders", "= 3.0"
 end

@@ -10,7 +10,7 @@ RSpec.describe CommentsController, type: :controller do
     let!(:comment_2) { article_1.comments.create body: 'Comment 2' }
     let!(:comment_3) { article_2.comments.create body: 'Comment 3' }
 
-    before { get :index, article_id: article_1.id }
+    before { get :index, params: { article_id: article_1.id } }
 
     it 'should return paginated collection' do
       expect(response).to render_template(:index)

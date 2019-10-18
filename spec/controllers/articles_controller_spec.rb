@@ -23,7 +23,7 @@ RSpec.describe ArticlesController, type: :controller do
       let!(:article_3) { current_user.articles.create title: 'Third article' }
       let!(:article_4) { current_user.articles.create title: 'Fourth article' }
 
-      before { get :index, recent: true }
+      before { get :index, params: { recent: true } }
 
       it 'should return last 2 articles ordered by created_at' do
         expect(response).to render_template(:index)
@@ -36,7 +36,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when need to open current_user article' do
       let!(:article_1) { current_user.articles.create title: 'First article' }
 
-      before { get :show, id: article_1.id }
+      before { get :show, params: { id: article_1.id } }
 
       it 'should find current_user article' do
         expect(response).to render_template(:show)
@@ -48,7 +48,7 @@ RSpec.describe ArticlesController, type: :controller do
       let!(:article_1) { another_user.articles.create title: 'First article' }
 
       it 'should find current_user article' do
-        expect { get :show, id: article_1.id }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { get :show, params: { id: article_1.id } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -67,7 +67,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when success' do
       let(:params) { { article: { title: 'First article' } } }
 
-      before { post :create, params }
+      before { post :create, params: params }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to redirect_to(articles_path)
@@ -81,7 +81,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when article not valid' do
       let(:params) { { article: { title: '' } } }
 
-      before { post :create, params }
+      before { post :create, params: params }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to render_template(:new)
@@ -102,7 +102,7 @@ RSpec.describe ArticlesController, type: :controller do
       end
 
       it 'should create new article and redirect to articles path' do
-        expect { post :create, params }.to raise_error('Too many Rails magic. Please check your code')
+        expect { post :create, params: params }.to raise_error('Too many Rails magic. Please check your code')
       end
     end
   end
@@ -111,7 +111,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when current_user article' do
       let(:article_1) { current_user.articles.create title: 'First article' }
 
-      before { get :edit, id: article_1.id }
+      before { get :edit, params: { id: article_1.id } }
 
       it 'should render form' do
         expect(response).to render_template(:edit)
@@ -123,7 +123,7 @@ RSpec.describe ArticlesController, type: :controller do
       let(:article_1) { another_user.articles.create title: 'First article' }
 
       it 'should raise error' do
-        expect { get :edit, id: article_1.id }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { get :edit, params: { id: article_1.id } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -134,7 +134,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when success' do
       let(:params) { { title: 'First article - new name' } }
 
-      before { put :update, id: article_1.id, article: params }
+      before { put :update, params: { id: article_1.id, article: params } }
 
       it 'should update article and redirect to articles path' do
         expect(response).to redirect_to(articles_path)
@@ -146,7 +146,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when article not valid' do
       let(:params) { { title: '' } }
 
-      before { put :update, id: article_1.id, article: params }
+      before { put :update, params: { id: article_1.id, article: params } }
 
       it 'should create new article and redirect to articles path' do
         expect(response).to render_template(:edit)
@@ -163,7 +163,7 @@ RSpec.describe ArticlesController, type: :controller do
       let(:article_1) { another_user.articles.create title: 'First article' }
 
       it 'should raise error' do
-        expect { put :update, id: article_1.id }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { put :update, params: { id: article_1.id } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -172,7 +172,7 @@ RSpec.describe ArticlesController, type: :controller do
     context 'when current_user article' do
       let(:article_1) { current_user.articles.create title: 'First article' }
 
-      before { delete :destroy, id: article_1.id }
+      before { delete :destroy, params: { id: article_1.id } }
 
       it 'should render form' do
         expect(response).to redirect_to(articles_path)
@@ -185,7 +185,7 @@ RSpec.describe ArticlesController, type: :controller do
       let(:article_1) { another_user.articles.create title: 'First article' }
 
       it 'should raise error' do
-        expect { delete :destroy, id: article_1.id }.to raise_error(ActiveRecord::RecordNotFound)
+        expect { delete :destroy, params: { id: article_1.id } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
