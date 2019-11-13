@@ -42,7 +42,7 @@ RSpec.describe AdminArticlesController, type: :controller do
       before { post :create, params: params }
 
       it 'should create new article and redirect to articles path' do
-        expect(response).to redirect_to(admin_articles_path)
+        expect(response).to redirect_to(edit_admin_article_path(Article.last.id))
         expect(flash[:notice]).to eq 'Saved!'
         expect(assigns(:article)).to be_kind_of(Article)
         expect(assigns(:article).title).to eq('First article')
@@ -84,7 +84,7 @@ RSpec.describe AdminArticlesController, type: :controller do
       before { put :update, params: { id: article_1.id, article: params } }
 
       it 'should update article and redirect to articles path' do
-        expect(response).to redirect_to(admin_articles_path)
+        expect(response).to redirect_to(edit_admin_article_path(article_1))
         expect(flash[:notice]).to eq 'Saved!'
         expect(assigns(:article).reload.title).to eq('First article - new name')
       end

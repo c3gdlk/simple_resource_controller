@@ -5,9 +5,12 @@ class AdminArticlesController < BaseController
   private
 
   def after_save_redirect_path
+    edit_admin_article_path(resource)
+  end
+
+  def after_destroy_redirect_path
     admin_articles_path
   end
-  alias :after_destroy_redirect_path :after_save_redirect_path
 
   def after_save_messages
     { notice: 'Saved!' }

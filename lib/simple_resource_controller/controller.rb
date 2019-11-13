@@ -174,8 +174,10 @@ module SimpleResourceController
           resource.errors[:base] << resource_wasnt_saved_message
         end
 
-        unless block_given? || options[:location].present?
-          options[:location] = after_save_redirect_path
+        if result.present?
+          unless block_given? || options[:location].present?
+            options[:location] = after_save_redirect_path
+          end
         end
 
         respond_with resource, options, &block
