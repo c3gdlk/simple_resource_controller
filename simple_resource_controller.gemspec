@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "jbuilder"
+  spec.add_development_dependency 'active_model_serializers', '~> 0.10.0'
 
   spec.add_dependency "railties"
   spec.add_dependency "actionpack"

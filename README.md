@@ -63,6 +63,36 @@ class AnotherArticlesController < ApplicationController
 end
 ```
 
+### API examples
+
+Gem suppports [jbuilder](https://github.com/rails/jbuilder) and [activemodel_serializer](https://github.com/rails-api/active_model_serializers) as API serializers
+
+#### JBuilder
+
+```ruby
+resource_api jbuilder: true
+```
+
+But you will also need to add all view files for your actions, including `new` and `edit`.
+
+**You can find example inside tests.**
+
+#### ActiveModel::Serializer
+
+Minimum config:
+
+```ruby
+resource_api activemodel_serializer: { }
+```
+
+All options:
+
+```ruby
+resource_api activemodel_serializer: { record_serializer: MyArticleSerializer, error_serializer: MyErrorSerializer }
+```
+
+**You can find example inside tests.**
+
 ### Controller configuration
 
 The first required configuration is an action name.
@@ -393,6 +423,11 @@ You will get this exception if the Category model is missing.
 This is my favorite one. The `responders` gem follows the next logic - if a record is valid it means that it was saved to the database. But there is a case when too many Rails magic can cause valid records which weren’t saved to the DB. Yeah, sometimes Rails hurts =)
 If you will get this exception - check your ActiveRecord callbacks, your code has some smells.
 
+
+#### `error_serializer should be configured for the activemodel API`
+
+You are trying to use the `resource_api` DSL to setup the activemodel_serializer, faced with the validation error in create or update action.
+But didn't configured an error serializer: `resource_api activemodel_serializer: { error_serializer: MyErrorSerializer }`
 
 ## Contributing
 

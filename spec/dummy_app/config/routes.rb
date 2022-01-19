@@ -8,4 +8,9 @@ Rails.application.routes.draw do
   end
 
   resources :post_comments
+
+  namespace :api do
+    resources :articles
+    resources :another_articles
+  end
 end

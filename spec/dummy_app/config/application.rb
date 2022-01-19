@@ -5,6 +5,8 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 require 'simple_resource_controller'
+require 'jbuilder'
+require 'active_model_serializers'
 
 module Dummy
   class Application < Rails::Application

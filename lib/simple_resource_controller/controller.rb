@@ -26,8 +26,7 @@ module SimpleResourceController
       def create(options={}, &block)
         build_resource
         success = save_resource_and_respond!(options, &block)
-      ensure
-        setup_flash_messages(after_create_messages) if success
+        setup_flash_messages(after_create_messages) if success && !current_controller_api?
       end
       alias :create! :create
     end
@@ -42,8 +41,7 @@ module SimpleResourceController
     module Update
       def update(options={}, &block)
         success = save_resource_and_respond!(options, &block)
-      ensure
-        setup_flash_messages(after_update_messages) if success
+        setup_flash_messages(after_update_messages) if success && !current_controller_api?
       end
       alias :update! :update
     end
@@ -52,13 +50,27 @@ module SimpleResourceController
       def destroy(options={}, &block)
         destroy_resource_and_respond!(options, &block)
       ensure
-        setup_flash_messages(after_destroy_messages)
+        setup_flash_messages(after_destroy_messages) unless current_controller_api?
       end
       alias :destroy! :destroy
     end
 
     module CommonMethods
       private
+
+      def current_controller_api?
+        self.class.api_config.present?
+      end
+
+      def activemodel_serializer?
+        current_controller_api? && self.class.api_config.dig(:activemodel_serializer).present?
+      end
+
+      def render_resource_with_activemodel_serializer(options)
+        record_serializer = self.class.api_config.dig(:activemodel_serializer, :record_serializer)
+
+        render({ json: resource, status: :ok }.merge(record_serializer ? { serializer: record_serializer } : {} ).merge(options))
+      end
 
       def collection
         return instance_variable_get(:"@#{collection_name}") if instance_variable_get(:"@#{collection_name}").present?
@@ -159,11 +171,15 @@ module SimpleResourceController
       def destroy_resource_and_respond!(options={}, &block)
         resource.destroy
 
-        unless block_given? || options[:location].present?
+        unless block_given? || options[:location].present? || current_controller_api?
           options[:location] = after_destroy_redirect_path
         end
 
-        respond_with resource, options, &block
+        if activemodel_serializer?
+          render_resource_with_activemodel_serializer(options)
+        else
+          respond_with resource, options, &block
+        end
       end
 
       def save_resource_and_respond!(options={}, &block)
@@ -175,12 +191,21 @@ module SimpleResourceController
         end
 
         if result.present?
-          unless block_given? || options[:location].present?
+          unless block_given? || options[:location].present? || current_controller_api?
             options[:location] = after_save_redirect_path
           end
+        elsif activemodel_serializer?
+          error_serializer = self.class.api_config.dig(:activemodel_serializer, :error_serializer)
+
+          raise "error_serializer should be configured for the activemodel API" unless error_serializer.present?
+          options[:serializer] = error_serializer
         end
 
-        respond_with resource, options, &block
+        if result.present? && activemodel_serializer?
+          render_resource_with_activemodel_serializer(options)
+        else
+          respond_with resource, options, &block
+        end
 
         result
       end
@@ -257,6 +282,14 @@ module SimpleResourceController
 
       def paginate_collection(value)
         @paginate_collection_config = value
+      end
+
+      def api_config
+        @api_config
+      end
+
+      def resource_api(value)
+        @api_config = value
       end
     end
 
