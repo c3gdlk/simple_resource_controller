@@ -96,13 +96,19 @@ module SimpleResourceController
       def build_resource
         return instance_variable_get(:"@#{resource_name}") if instance_variable_get(:"@#{resource_name}").present?
 
-        new_instance = association_chain.is_a?(ActiveRecord::Relation) ? association_chain.build : association_chain.new
-        instance_variable_set(:"@#{resource_name}", new_instance)
+        instance = association_chain.is_a?(ActiveRecord::Relation) ? association_chain.build : association_chain.new
+        instance.assign_attributes(permitted_params) if action_name == "create"
+
+        instance_variable_set(:"@#{resource_name}", instance)
       end
 
       def resource
         return instance_variable_get(:"@#{resource_name}") if instance_variable_get(:"@#{resource_name}").present?
-        instance_variable_set(:"@#{resource_name}",  association_chain.find(params[:id]))
+
+        instance = association_chain.find(params[:id])
+        instance.assign_attributes(permitted_params) if action_name == "update"
+
+        instance_variable_set(:"@#{resource_name}",  instance)
       end
 
       def destroy_resource_and_respond!(options={}, &block)
@@ -120,7 +126,7 @@ module SimpleResourceController
       end
 
       def save_resource_and_respond!(options={}, &block)
-        success = resource.update(permitted_params)
+        success = resource.save
 
         # process not saved result because of failed callback or another ActiveRecord magic
         if resource.valid? && !success

@@ -98,7 +98,7 @@ RSpec.describe ArticlesController, type: :controller do
 
       before do
         allow_any_instance_of(Article).to receive(:valid?).and_return(true)
-        allow_any_instance_of(Article).to receive(:update).and_return(false)
+        allow_any_instance_of(Article).to receive(:save).and_return(false)
       end
 
       it 'should create new article and redirect to articles path' do
