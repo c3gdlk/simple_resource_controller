@@ -5,13 +5,32 @@ module SimpleResourceController
         module Api
           private
 
+          def api_before_index_response_callback(options)
+            if activemodel_serializer?
+              resource_serializer = self.class.api_config.dig(:activemodel_serializer, :resource_serializer)
+              collection_serializer = self.class.api_config.dig(:activemodel_serializer, :collection_serializer)
+
+              options[:json] ||= collection
+              options[:each_serializer] ||= resource_serializer if resource_serializer.present?
+              options[:serializer] ||= collection_serializer if collection_serializer.present?
+            end
+          end
+
+          def api_before_show_response_callback(options)
+            if activemodel_serializer?
+              resource_serializer = self.class.api_config.dig(:activemodel_serializer, :resource_serializer)
+              options[:json] ||= resource
+              options[:serializer] ||= resource_serializer if resource_serializer.present?
+            end
+          end
+
           def api_before_save_success_response_callback(options)
             options[:status] ||= :created if action_name == "create"
 
             if activemodel_serializer?
-              record_serializer = self.class.api_config.dig(:activemodel_serializer, :record_serializer)
+              resource_serializer = self.class.api_config.dig(:activemodel_serializer, :resource_serializer)
               options[:json] ||= resource
-              options[:serializer] ||= record_serializer
+              options[:serializer] ||= resource_serializer if resource_serializer.present?
             end
           end
 
@@ -27,9 +46,9 @@ module SimpleResourceController
 
           def api_before_destroy_response_callback(options)
             if activemodel_serializer?
-              record_serializer = self.class.api_config.dig(:activemodel_serializer, :record_serializer)
+              resource_serializer = self.class.api_config.dig(:activemodel_serializer, :resource_serializer)
               options[:json] ||= resource
-              options[:serializer] ||= record_serializer
+              options[:serializer] ||= resource_serializer if resource_serializer.present?
             end
           end
 

@@ -70,7 +70,16 @@ Gem suppports [jbuilder](https://github.com/rails/jbuilder) and [activemodel_ser
 #### JBuilder
 
 ```ruby
-resource_api jbuilder: true
+class AnotherArticlesController < ApplicationController
+  resource_actions :crud
+  resource_api jbuilder: true
+
+  private
+
+  def permitted_params
+    params.require(:article).permit(:title)
+  end
+end
 ```
 
 But you will also need to add all view files for your actions, including `new` and `edit`.
@@ -82,13 +91,54 @@ But you will also need to add all view files for your actions, including `new` a
 Minimum config:
 
 ```ruby
-resource_api activemodel_serializer: { }
+class AnotherArticlesController < ApplicationController
+  resource_actions :crud
+  resource_api activemodel_serializer: { }
+
+  private
+
+  def permitted_params
+    params.require(:article).permit(:title)
+  end
+end
 ```
 
 All options:
 
 ```ruby
-resource_api activemodel_serializer: { record_serializer: MyArticleSerializer, error_serializer: MyErrorSerializer }
+class AnotherArticlesController < ApplicationController
+  resource_actions :crud
+  resource_api activemodel_serializer: { collection_serializer: MyCollectionSerializer, resource_serializer: MyArticleSerializer, error_serializer: MyErrorSerializer }
+
+  private
+
+  def permitted_params
+    params.require(:article).permit(:title)
+  end
+end
+```
+
+With redefined options:
+
+**Important note: you should always set the error_serializer**
+
+```ruby
+class AnotherArticlesController < ApplicationController
+  resource_actions :crud
+  resource_api activemodel_serializer: { collection_serializer: MyCollectionSerializer, resource_serializer: MyArticleSerializer, error_serializer: MyErrorSerializer }
+
+  # will use the AnotherArticleSerializer when success
+  # will use the MyErrorSerializer when failure
+  def update
+    update! serializer: AnotherArticleSerializer
+  end
+
+  private
+
+  def permitted_params
+    params.require(:article).permit(:title)
+  end
+end
 ```
 
 **You can find example inside tests.**

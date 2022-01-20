@@ -5,6 +5,12 @@ module SimpleResourceController
         module Html
           private
 
+          def html_before_index_response_callback(options)
+          end
+
+          def html_before_show_response_callback(options)
+          end
+
           def html_before_save_success_response_callback(options)
             options[:location] ||= after_save_redirect_path
             setup_flash_messages(after_create_messages) if action_name == "create"

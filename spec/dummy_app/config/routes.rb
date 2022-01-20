@@ -13,5 +13,14 @@ Rails.application.routes.draw do
   namespace :api do
     resources :articles
     resources :another_articles
+    resources :some_articles do
+      collection do
+        get :index2
+      end
+
+      member do
+        get :show2
+      end
+    end
   end
 end

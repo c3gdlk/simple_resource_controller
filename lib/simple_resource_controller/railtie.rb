@@ -1,5 +1,6 @@
 module SimpleResourceController
   require 'rails'
+  require_relative './controller/config'
 
   class Railtie < Rails::Railtie
     initializer  'insert SimpleResourceController to ActionController' do
@@ -13,6 +14,7 @@ module SimpleResourceController
     def self.insert
       if defined?(::ActionController)
         ::ActionController::Base.extend(Configurator)
+        ::ActionController::Base.extend(SimpleResourceController::Controller::Config)
       end
     end
   end

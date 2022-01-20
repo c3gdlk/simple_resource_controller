@@ -111,20 +111,6 @@ module SimpleResourceController
         instance_variable_set(:"@#{resource_name}",  instance)
       end
 
-      def destroy_resource_and_respond!(options={}, &block)
-        resource.destroy
-
-        unless block_given?
-          if current_controller_api?
-            api_before_destroy_response_callback(options)
-          else
-            html_before_destroy_response_callback(options)
-          end
-        end
-
-        respond_with resource, options, &block
-      end
-
       def save_resource_and_respond!(options={}, &block)
         success = resource.save
 

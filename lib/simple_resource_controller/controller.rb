@@ -23,8 +23,6 @@ module SimpleResourceController
         raise 'Unknown action name' unless (actions - DEPENDENCIES_MAP.keys).size.zero?
       end
 
-      controller_class.extend Config
-
       loaded_modules = [Implementation]
 
       if actions.include?(ALL_ACTIONS_ALIAS)
